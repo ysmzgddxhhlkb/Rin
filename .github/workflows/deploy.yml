@@ -49,15 +49,10 @@ jobs:
           echo "Downloading from: $URL"
           
           mkdir -p ./artifacts
-          if [[ "$URL" == *.zip ]]; then
-            curl -L "$URL" -o ./artifacts/build.zip
-            unzip -q ./artifacts/build.zip -d ./artifacts
-            rm ./artifacts/build.zip
-          else
-            curl -L "$URL" -o ./artifacts/build.tar.gz
-            tar -xzf ./artifacts/build.tar.gz -C ./artifacts
-            rm ./artifacts/build.tar.gz
-          fi
+          # 强制下载为ZIP + 携带GitHub令牌解决404 + 直接解压
+          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$URL" -o ./artifacts/build.zip
+          unzip -q ./artifacts/build.zip -d ./artifacts
+          rm ./artifacts/build.zip
 
       - name: Set deployment type
         id: meta
